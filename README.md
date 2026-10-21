@@ -1,4 +1,4 @@
-# Odoo apps by Classic Decoration — Odoo 19
+# Kitchen Creator — Odoo apps by Classic Decoration (Odoo 19)
 
 | Module | Description |
 |---|---|
