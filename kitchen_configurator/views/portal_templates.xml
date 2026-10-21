@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_breadcrumbs_kitchen" name="Portal layout: kitchen projects" inherit_id="portal.portal_breadcrumbs" priority="40">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'kitchen_design'" class="breadcrumb-item active">Kitchen projects</li>
+        </xpath>
+    </template>
+
+    <template id="portal_my_home_kitchen" name="My kitchen projects" inherit_id="portal.portal_my_home" priority="40" customize_show="True">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_client_category_enable" t-value="True"/>
+        </xpath>
+        <div id="portal_client_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/kitchen_configurator/static/description/icon.svg'"/>
+                <t t-set="title">My kitchen &amp; wardrobe projects</t>
+                <t t-set="url" t-value="'/my/kitchen'"/>
+                <t t-set="text">Design your kitchen or wardrobe in 3D and request a quote</t>
+                <t t-set="placeholder_count" t-value="'kitchen_design_count'"/>
+                <t t-set="config_card" t-value="True"/>
+            </t>
+        </div>
+    </template>
+
+    <template id="portal_my_kitchen" name="My kitchen projects">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Kitchen projects</t>
+            </t>
+            <form t-if="can_create" action="/my/kitchen/new" method="post" class="d-flex flex-wrap gap-2 my-3">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <select name="project_type" class="form-select w-auto">
+                    <option value="kitchen">Kitchen</option>
+                    <option value="wardrobe">Wardrobe / dressing</option>
+                </select>
+                <input type="text" name="name" class="form-control w-auto flex-grow-1" maxlength="128"
+                       placeholder="Name of the project (e.g. Main bedroom wardrobe)"/>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa fa-cube me-1"/>New project
+                </button>
+            </form>
+            <t t-if="not designs">
+                <p class="alert alert-info">You have no kitchen project yet.</p>
+            </t>
+            <t t-if="designs" t-call="portal.portal_table">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Type</th>
+                        <th>Last saved</th>
+                        <th>Status</th>
+                        <th/>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="designs" t-as="design">
+                        <td><a t-attf-href="/kitchen/configurator/#{design.id}" t-out="design.name"/></td>
+                        <td><span t-field="design.project_type"/></td>
+                        <td><span t-field="design.last_saved"/></td>
+                        <td><span class="badge text-bg-light" t-field="design.state"/></td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-secondary" t-attf-href="/kitchen/configurator/#{design.id}">
+                                <i class="fa fa-cube me-1"/>Open
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </t>
+        </t>
+    </template>
+</odoo>

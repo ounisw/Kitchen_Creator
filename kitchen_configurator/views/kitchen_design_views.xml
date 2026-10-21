@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="kitchen_design_view_list" model="ir.ui.view">
+        <field name="name">kitchen.design.list</field>
+        <field name="model">kitchen.design</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="project_type"/>
+                <field name="user_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="sale_order_id" optional="show"/>
+                <field name="last_saved" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'draft'" decoration-warning="state == 'requested'" decoration-success="state == 'quoted'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="kitchen_design_view_form" model="ir.ui.view">
+        <field name="name">kitchen.design.form</field>
+        <field name="model">kitchen.design</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open_configurator" type="object" string="Kitchen configurator"
+                            class="btn-primary" icon="fa-cube"/>
+                    <button name="action_print_drawing" type="object" string="Technical drawing"
+                            icon="fa-print" invisible="not has_drawing"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_sale_orders" type="object" class="oe_stat_button" icon="fa-dollar"
+                                invisible="not sale_order_count">
+                            <field name="sale_order_count" widget="statinfo" string="Quotations"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="project_type" widget="radio" options="{'horizontal': true}"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                        </group>
+                        <group>
+                            <field name="sale_order_id"/>
+                            <field name="last_saved"/>
+                            <field name="has_design" string="3D design saved"/>
+                            <field name="has_drawing" string="Technical drawing"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="kitchen_design_view_search" model="ir.ui.view">
+        <field name="name">kitchen.design.search</field>
+        <field name="model">kitchen.design</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="user_id"/>
+                <field name="sale_order_id"/>
+                <filter name="my" string="My projects" domain="[('user_id', '=', uid)]"/>
+                <separator/>
+                <filter name="kitchen" string="Kitchens" domain="[('project_type', '=', 'kitchen')]"/>
+                <filter name="wardrobe" string="Wardrobes" domain="[('project_type', '=', 'wardrobe')]"/>
+                <separator/>
+                <filter name="requested" string="Quote requested" domain="[('state', '=', 'requested')]"/>
+                <group>
+                    <filter name="group_user" string="Salesperson" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'project_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_kitchen_design" model="ir.actions.act_window">
+        <field name="name">3D projects (kitchen &amp; wardrobe)</field>
+        <field name="res_model">kitchen.design</field>
+        <field name="path">kitchen-projects</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No 3D project yet</p>
+            <p>Open the kitchen configurator from a quotation, or let your customers design their kitchen from the portal.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_kitchen_design"
+              action="action_kitchen_design"
+              parent="sale.sale_order_menu"
+              sequence="30"
+              groups="sales_team.group_sale_salesman"/>
+</odoo>

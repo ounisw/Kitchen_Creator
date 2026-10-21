@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <defs><linearGradient id="bgA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#1e3a8a"/></linearGradient></defs>
+  <rect width="256" height="256" rx="48" fill="url(#bgA)"/>
+  <!-- wall units -->
+  <path d="M58 70 128 40 198 70 128 100Z" fill="#dbeafe"/>
+  <path d="M58 70 128 100V128L58 98Z" fill="#ffffff"/>
+  <path d="M198 70 128 100V128L198 98Z" fill="#bfdbfe"/>
+  <path d="M93 85 93 113M163 85 163 113" stroke="#93c5fd" stroke-width="3"/>
+  <!-- worktop -->
+  <path d="M40 150 128 112 216 150 128 188Z" fill="#f59e0b"/>
+  <path d="M40 150 128 188V198L40 160Z" fill="#b45309"/>
+  <path d="M216 150 128 188V198L216 160Z" fill="#d97706"/>
+  <!-- base units -->
+  <path d="M46 162 128 198V236L46 200Z" fill="#ffffff"/>
+  <path d="M210 162 128 198V236L210 200Z" fill="#bfdbfe"/>
+  <path d="M87 180V218M169 180V218" stroke="#93c5fd" stroke-width="3"/>
+  <path d="M66 182 76 186M107 199 117 203M148 203 158 199M189 186 199 182" stroke="#1e3a8a" stroke-width="4" stroke-linecap="round"/>
+</svg>

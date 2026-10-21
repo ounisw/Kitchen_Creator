@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+# Third-party 3D models are published only when their license allows it.
+*.glb
+*.skp

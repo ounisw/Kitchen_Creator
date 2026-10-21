@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_kitchen_drawing" model="report.paperformat">
+        <field name="name">Kitchen drawing (A4 landscape)</field>
+        <field name="format">A4</field>
+        <field name="orientation">Landscape</field>
+        <field name="margin_top">30</field>
+        <field name="margin_bottom">15</field>
+        <field name="margin_left">10</field>
+        <field name="margin_right">10</field>
+        <field name="header_spacing">25</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_kitchen_drawing" model="ir.actions.report">
+        <field name="name">Technical drawing</field>
+        <field name="model">kitchen.design</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">kitchen_configurator.report_kitchen_drawing</field>
+        <field name="report_file">kitchen_configurator.report_kitchen_drawing</field>
+        <field name="print_report_name">'Plan technique - %s' % object.name.replace('/', '-')</field>
+        <field name="paperformat_id" ref="paperformat_kitchen_drawing"/>
+        <field name="binding_model_id" ref="model_kitchen_design"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_kitchen_drawing_page_header">
+        <div style="border-bottom: 2px solid #111827; margin-bottom: 4mm; padding-bottom: 1mm;">
+            <strong style="font-size: 15pt;" t-out="title"/>
+            <span style="float: right; font-size: 9pt; color: #4b5563;">
+                <t t-out="design.name"/> · <t t-out="design.partner_id.display_name"/>
+                <t t-if="design.sale_order_id"> · <t t-out="design.sale_order_id.name"/></t>
+                <t t-if="design.last_saved"> · <span t-field="design.last_saved" t-options="{'widget': 'date'}"/></t>
+            </span>
+        </div>
+    </template>
+
+    <template id="report_kitchen_drawing">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="design">
+                <t t-set="values" t-value="design._drawing_report_values()"/>
+                <t t-set="labels" t-value="values['labels']"/>
+                <t t-set="has_detail" t-value="values['has_detail']"/>
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: Arial, Helvetica, sans-serif;">
+                        <t t-if="not values['views']">
+                            <p>No technical drawing yet: open the kitchen configurator and save the project.</p>
+                        </t>
+                        <t t-foreach="values['views']" t-as="view">
+                            <div style="page-break-after: always; page-break-inside: avoid;">
+                                <t t-call="kitchen_configurator.report_kitchen_drawing_page_header">
+                                    <t t-set="title" t-value="view['title']"/>
+                                </t>
+                                <div style="text-align: center;">
+                                    <img t-att-src="view['src']" style="max-width: 100%; max-height: 140mm;"/>
+                                </div>
+                                <p style="font-size: 8pt; color: #4b5563; margin-top: 2mm;">
+                                    <t t-if="view_first" t-out="labels.get('legend', '')"/>
+                                    <t t-if="has_detail and not view_first" t-out="labels.get('fillLegend', '')"/>
+                                    <t t-out="labels.get('units', '')"/>
+                                </p>
+                            </div>
+                        </t>
+
+                        <div t-if="values['rows']" style="page-break-inside: auto;">
+                            <t t-call="kitchen_configurator.report_kitchen_drawing_page_header">
+                                <t t-set="title" t-value="labels.get('schedule', 'Cabinet schedule')"/>
+                            </t>
+                            <table class="table table-sm table-bordered" style="font-size: 9pt;">
+                                <thead>
+                                    <tr style="background: #f3f4f6;">
+                                        <th class="text-center" t-out="labels.get('mark', 'No.')"/>
+                                        <th t-out="labels.get('item', 'Item')"/>
+                                        <th class="text-center" t-out="labels.get('wall', 'Wall')"/>
+                                        <th class="text-end" t-out="labels.get('offset', 'Position')"/>
+                                        <th class="text-end" t-out="labels.get('elevation', 'Height above floor')"/>
+                                        <th class="text-end" t-out="labels.get('width', 'Width')"/>
+                                        <th class="text-end" t-out="labels.get('height', 'Height')"/>
+                                        <th class="text-end" t-out="labels.get('depth', 'Depth')"/>
+                                        <th t-if="has_detail" t-out="labels.get('detail', 'Details')"/>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="values['rows']" t-as="row">
+                                        <td class="text-center"><strong t-out="row['mark']"/></td>
+                                        <td t-out="row['name']"/>
+                                        <td class="text-center" t-out="row['wall']"/>
+                                        <td class="text-end" t-out="row['offset']"/>
+                                        <td class="text-end" t-out="row['elevation']"/>
+                                        <td class="text-end" t-out="row['width']"/>
+                                        <td class="text-end" t-out="row['height']"/>
+                                        <td class="text-end" t-out="row['depth']"/>
+                                        <td t-if="has_detail" style="font-size: 8pt;" t-out="row.get('detail', '')"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <t t-if="values['worktops']">
+                                <p style="font-weight: bold; margin-top: 4mm;" t-out="labels.get('worktops', 'Worktops')"/>
+                                <table class="table table-sm table-bordered" style="font-size: 9pt;">
+                                    <thead>
+                                        <tr style="background: #f3f4f6;">
+                                            <th class="text-center" t-out="labels.get('wall', 'Wall')"/>
+                                            <th class="text-end" t-out="labels.get('from', 'From')"/>
+                                            <th class="text-end" t-out="labels.get('to', 'To')"/>
+                                            <th class="text-end" t-out="labels.get('length', 'Length')"/>
+                                            <th class="text-end" t-out="labels.get('depth', 'Depth')"/>
+                                            <th class="text-end" t-out="labels.get('thickness', 'Thickness')"/>
+                                            <th class="text-end" t-out="labels.get('cutouts', 'Cut-outs')"/>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="values['worktops']" t-as="w">
+                                            <td class="text-center" t-out="w['wall']"/>
+                                            <td class="text-end" t-out="w['start']"/>
+                                            <td class="text-end" t-out="w['end']"/>
+                                            <td class="text-end" t-out="w['length']"/>
+                                            <td class="text-end" t-out="w['depth']"/>
+                                            <td class="text-end" t-out="w['thickness']"/>
+                                            <td class="text-end" t-out="w['cutouts']"/>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </t>
+                            <p style="font-size: 8pt; color: #4b5563;" t-out="labels.get('units', '')"/>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

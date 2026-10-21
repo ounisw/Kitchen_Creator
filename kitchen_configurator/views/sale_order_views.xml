@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_kitchen_configurator" model="ir.ui.view">
+        <field name="name">sale.order.form.kitchen.configurator</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button name="action_open_kitchen_configurator" type="object" string="Kitchen configurator"
+                        icon="fa-cube" invisible="state not in ('draft', 'sent')"/>
+                <button name="action_print_kitchen_drawing" type="object" string="Technical drawing"
+                        icon="fa-print" invisible="not kitchen_has_drawing"/>
+            </header>
+            <div name="button_box" position="inside">
+                <button name="action_view_kitchen_design" type="object" class="oe_stat_button" icon="fa-cube"
+                        invisible="not kitchen_design_id">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Kitchen 3D</span>
+                    </div>
+                </button>
+            </div>
+            <xpath expr="//field[@name='order_line']/list" position="inside">
+                <field name="kitchen_generated" column_invisible="True"/>
+            </xpath>
+            <field name="payment_term_id" position="after">
+                <field name="kitchen_design_id" invisible="not kitchen_design_id" readonly="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>
